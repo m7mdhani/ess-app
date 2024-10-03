@@ -1,70 +1,102 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import Attendance from "@/components/Attendance/Attendance";
+import Summary from "@/components/Summary/Summary";
+import { Colors } from "@/constants/Colors";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+  Image,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  useColorScheme,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import Toast from "react-native-root-toast";
+import { AxiosError } from "axios";
+import { useMemo, useState } from "react";
+import { TimeLogsService } from "@/services/TimeLogs/TimeLogsService";
+// import { useColorScheme } from "nativewind";
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({});
+  const [status, setStatus] = useState("Clock In");
+  const timeLogsService: TimeLogsService = useMemo(
+    () => new TimeLogsService(""),
+    []
+  );
+
+  const takeAction = async () => {
+    setLoading(true);
+    if (status === "Clock In") {
+      toggleClock("ClockIn", "Clock In Successful", "Clock Out");
+    } else {
+      toggleClock("ClockOut", "Clock Out Successful", "Clock In");
+    }
+  };
+
+  const toggleClock = async (method: string, msg: string, status: string) => {
+    try {
+      const response = await timeLogsService.takeAction({
+        employeeTimeLogId: 34,
+        logAction: method,
+      });
+      Toast.show(msg);
+      setLoading(false);
+      setStatus(status);
+
+      // console.log(response?.data);
+      setData(response?.data);
+    } catch (error: AxiosError | any) {
+      setLoading(false);
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView
+      className={`flex-1 ${
+        colorScheme == "dark" ? "bg-[#011127]" : "bg-slate-50"
+      }`}
+    >
+      <StatusBar style={`${colorScheme == "dark" ? "light" : "dark"}`} />
+
+      <View
+        className={`flex-row justify-between items-center  p-4  ${
+          colorScheme == "dark" ? "bg-secondary" : "bg-slate-50"
+        } border-b border-slate-300`}
+      >
+        <Text
+          className={`font-bold text-xl  ${
+            colorScheme == "dark" ? "text-white" : "text-black"
+          }`}
+        >
+          Mohamed Hani
+        </Text>
+
+        <View className="gap-3 flex-row items-center">
+          <TouchableOpacity>
+            <Ionicons
+              name="notifications-outline"
+              color={Colors.light.primary}
+              size={25}
+            />
+          </TouchableOpacity>
+
+          <Image
+            source={require("../../assets/images/logo.png")}
+            className="rounded-full w-8 h-8"
+            resizeMode="contain"
+          />
+        </View>
+      </View>
+
+      <ScrollView>
+        <Attendance loading={loading} takeAction={takeAction} status={status} />
+        <Summary />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

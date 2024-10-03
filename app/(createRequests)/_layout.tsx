@@ -1,0 +1,14 @@
+import { View, Text } from "react-native";
+import React from "react";
+import { Stack } from "expo-router";
+
+const CreateRequestsLayout = () => {
+  return (
+    <Stack>
+      <Stack.Screen name="overtimeRequest" />
+      <Stack.Screen name="missingtimeRequest" />
+    </Stack>
+  );
+};
+
+export default CreateRequestsLayout;
