@@ -1,3 +1,6 @@
+import i18n from "@/i18n";
+import i18next from "i18next";
+
 export function formatTime(inputTime: any) {
   return new Date(inputTime).toLocaleTimeString([], {
     hour: "2-digit",

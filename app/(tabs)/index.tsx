@@ -15,11 +15,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import Toast from "react-native-root-toast";
 import { AxiosError } from "axios";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TimeLogsService } from "@/services/TimeLogs/TimeLogsService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "@/i18n";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
+
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
   const [loadingBreak, setLoadingBreak] = useState(false);
@@ -70,6 +73,17 @@ export default function HomeScreen() {
       setLoadingBreak(false);
     }
   };
+
+    useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem("language");
+      if (savedLanguage) {
+        i18n.changeLanguage(savedLanguage);
+      }
+    };
+
+    loadLanguage();
+  }, []);
 
   return (
     <SafeAreaView
