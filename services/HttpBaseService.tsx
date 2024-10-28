@@ -1,20 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ToastAndroid } from "react-native";
 import Toast from "react-native-root-toast";
-
-interface IValidationsResponse {
-  propertyName: string;
-  errorMessage: string;
-  attemptedValue: string;
-  customState: null;
-  severity: number;
-  errorCode: string;
-  formattedMessagePlaceholderValues: {
-    PropertyName: string;
-    PropertyValue: string;
-  };
-}
+import { IValidationsResponse } from "@/types";
 
 export abstract class HTTPBaseService {
   protected instance: AxiosInstance;
@@ -22,7 +9,7 @@ export abstract class HTTPBaseService {
   protected readonly baseURL: string | undefined;
   private abortController: AbortController;
 
-  public constructor(baseURL: string | undefined, ssas: string) {
+  public constructor(baseURL: string | undefined) {
     this.baseURL = baseURL;
     this.instance = axios.create({
       baseURL,
@@ -37,12 +24,9 @@ export abstract class HTTPBaseService {
   // Initialize token from AsyncStorage
   private async initializeToken() {
     const token = await AsyncStorage.getItem("token");
-    // if (token) {
-    // this.token =
-    // "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfMlRzdnJOb2xMLW41bGZ0bktrakhKYWNIbXpoV2hwRFY5bEtsdXo4S2swIn0.eyJleHAiOjE3Mjc4ODMzMTYsImlhdCI6MTcyNzg2NTMxNiwiYXV0aF90aW1lIjoxNzI3ODU2MDgyLCJqdGkiOiI3ODNkZjRmZi0yMmEzLTQwNjQtOTgyOC0zZDJkZWUwNzY5NWIiLCJpc3MiOiJodHRwOi8va2V5Y2xvYWsuaW50ZXJuYWwuNTcuMTUyLjguMzAubmlwLmlvL3JlYWxtcy9teVJlYWxtIiwiYXVkIjpbIi5OZXQtQ2xpZW50IiwiYWNjb3VudCJdLCJzdWIiOiJhYTVmYjU2ZS0yZDBiLTRmOWMtODQwOS01NjdjMmExZDk1YjUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJyZWFjdC1jbGllbnQiLCJub25jZSI6ImY5OWUzNTkwLTViYWYtNDFhYS04MGU5LWIzZDEzNGFlMGE2NSIsInNlc3Npb25fc3RhdGUiOiIzZDFiYjc3Ni1mYzU4LTQwOTMtOTVlYS0wNjIyNDQzZTAyMWIiLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly81Ny4xNTIuOC4zMC5uaXAuaW8iLCJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbXlyZWFsbSIsIm9mZmxpbmVfYWNjZXNzIiwiVGVzdFJvbGUiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIGVtYWlsIHJlYWxtLW1hbmFnZW1lbnQgcHJvZmlsZSBhY2NvdW50Iiwic2lkIjoiM2QxYmI3NzYtZmM1OC00MDkzLTk1ZWEtMDYyMjQ0M2UwMjFiIiwibWVtYmVyX2lkIjoxMSwiY291bnRyeSI6IkVHIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImNvbXBhbnlfaWQiOiIyIiwiZW1wbG95ZWVfaWQiOiJjb2RlMTBvbyIsIm5hbWUiOiJNb2hhbWVkIEhhbmkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJoYW5pQGdtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJNb2hhbWVkIiwiZmFtaWx5X25hbWUiOiJIYW5pIiwiZW1haWwiOiJoYW5pQGdtYWlsLmNvbSJ9.BMnafKHmMw7KbwgcUI_xue3jwEvYUqbHQSuoeb5E_0J9ckx-WU9-yt0ajvFWC2rIHeSWM1mU2GPTQh4N-27UKKwOxIkPcGNIZxplqqDNSPtzWsxIyGKUwYA1B12gyqA41Q-kivkh1_sLTzDLi4pLPI26d-qEUbHgW1uvB9T9e4iYyygtvPnnPmCYnYIJ3sj73C-cAAKZl-TgAORYWLRtaP00DzOwSt-rVcF9BB11ThsumMaoZ4cQFJ94ZqkgSh3-JVD9-Pvx7IJC0UH5TCVOCt3LV_pdBBbTH8VQEA37t-TAVgLerbOJgk13lCjsm_8Pve5--SpuhGQXR54uAhh4HQ";
-    this.token =
-      "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfMlRzdnJOb2xMLW41bGZ0bktrakhKYWNIbXpoV2hwRFY5bEtsdXo4S2swIn0.eyJleHAiOjE3Mjc5ODM0NDgsImlhdCI6MTcyNzk2NTQ4NywiYXV0aF90aW1lIjoxNzI3OTQ3NDQ4LCJqdGkiOiJlYmFhYTg2Mi1hMzcwLTQwZjEtYWM4ZS0wNmViZjk1MzIwMDEiLCJpc3MiOiJodHRwOi8va2V5Y2xvYWsuaW50ZXJuYWwuNTcuMTUyLjguMzAubmlwLmlvL3JlYWxtcy9teVJlYWxtIiwiYXVkIjpbIi5OZXQtQ2xpZW50IiwiYWNjb3VudCJdLCJzdWIiOiJhYTVmYjU2ZS0yZDBiLTRmOWMtODQwOS01NjdjMmExZDk1YjUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJyZWFjdC1jbGllbnQiLCJub25jZSI6ImFkOWRiMDhlLTQ0MmQtNGExOS04NDZkLTI2MTVjZThjNTcyMiIsInNlc3Npb25fc3RhdGUiOiJlNmU0ZDlmZS0wZTA0LTRlMmYtOTY1ZS05ZTNmNjdkZWMzMTAiLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly81Ny4xNTIuOC4zMC5uaXAuaW8iLCJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbXlyZWFsbSIsIm9mZmxpbmVfYWNjZXNzIiwiVGVzdFJvbGUiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIGVtYWlsIHJlYWxtLW1hbmFnZW1lbnQgcHJvZmlsZSBhY2NvdW50Iiwic2lkIjoiZTZlNGQ5ZmUtMGUwNC00ZTJmLTk2NWUtOWUzZjY3ZGVjMzEwIiwibWVtYmVyX2lkIjoxMSwiY291bnRyeSI6IkVHIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImNvbXBhbnlfaWQiOiIyIiwiZW1wbG95ZWVfaWQiOiJjb2RlMTBvbyIsIm5hbWUiOiJNb2hhbWVkIEhhbmkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJoYW5pQGdtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJNb2hhbWVkIiwiZmFtaWx5X25hbWUiOiJIYW5pIiwiZW1haWwiOiJoYW5pQGdtYWlsLmNvbSJ9.Vf2sxTg1TTQiQmXoehH-1z3eqeKWtGLlvTI27C-8IXFm3rTjHOn--NdukdV1w3xexHFU1iYu_h4DsD9I0fgbd8obdkjljMaAITd1ezBPHa5xcbB3s0zTtHvTPgJ_SbEsId8q20tQWQp_INSnrZuuHr4bEKAclwgkEvkS9Q9ZNTgdhoTlXJoABUh179apVR_-hsSujlfXk8PQtkyJlSXpCP1pGqHL8yRCZ_oBkn5k7N9wIZ3rFS_6PRk_x8d8Pfp9nhBpduGCKx3yVJrhkMvOZQQggRe1UhxvBjXEJXXFnB0wxXC6X3eWwOTCKM8NESeC2EVcC-cvf9sg96FHhT3Z6A";
-    // }
+    if (token) {
+      this.token = token;
+    }
   }
 
   private readonly initializeRequestInterceptor = () => {
@@ -73,34 +57,25 @@ export abstract class HTTPBaseService {
           status === 415 ||
           status === 504
         ) {
-          ToastAndroid.show(message || "Server Error", ToastAndroid.LONG);
+          Toast.show(message || "Server Error");
         } else if (status === 403) {
-          ToastAndroid.show(
-            "Not authorized to do this action!",
-            ToastAndroid.LONG
-          );
+          Toast.show("Not authorized to do this action!");
         } else if (status === 404) {
-          ToastAndroid.show(message || "Resource not found", ToastAndroid.LONG);
+          Toast.show(message || "Resource not found");
         } else if (status === 422 && error?.response?.data?.validations) {
           error?.response?.data?.validations.forEach(
             (validationError: IValidationsResponse) => {
-              ToastAndroid.show(
-                validationError?.errorMessage,
-                ToastAndroid.SHORT
-              );
+              Toast.show(validationError?.errorMessage);
             }
           );
         } else if (status === 422 && error?.response?.data?.message) {
           Toast.show(error?.response?.data?.message);
         } else if (status === 400) {
-          ToastAndroid.show(
-            "Bad Request: Please check your input and try again.",
-            ToastAndroid.LONG
-          );
+          Toast.show("Bad Request: Please check your input and try again.");
         } else if (status === 503 || status === 502) {
-          ToastAndroid.show("Error: Bad Gateway", ToastAndroid.LONG);
+          Toast.show("Error: Bad Gateway");
         } else if (error.message === "Network Error") {
-          ToastAndroid.show("No internet connection", ToastAndroid.LONG);
+          Toast.show("No internet connection");
         }
 
         return Promise.reject(error);
@@ -112,13 +87,13 @@ export abstract class HTTPBaseService {
     config: InternalAxiosRequestConfig
   ): Promise<InternalAxiosRequestConfig> => {
     // Set the Authorization token in the headers if available
-    if (this.token) {
-      config.headers[
-        "Authorization"
-      ] = `Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfMlRzdnJOb2xMLW41bGZ0bktrakhKYWNIbXpoV2hwRFY5bEtsdXo4S2swIn0.eyJleHAiOjE3Mjc5ODM0NDgsImlhdCI6MTcyNzk2NTQ4NywiYXV0aF90aW1lIjoxNzI3OTQ3NDQ4LCJqdGkiOiJlYmFhYTg2Mi1hMzcwLTQwZjEtYWM4ZS0wNmViZjk1MzIwMDEiLCJpc3MiOiJodHRwOi8va2V5Y2xvYWsuaW50ZXJuYWwuNTcuMTUyLjguMzAubmlwLmlvL3JlYWxtcy9teVJlYWxtIiwiYXVkIjpbIi5OZXQtQ2xpZW50IiwiYWNjb3VudCJdLCJzdWIiOiJhYTVmYjU2ZS0yZDBiLTRmOWMtODQwOS01NjdjMmExZDk1YjUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJyZWFjdC1jbGllbnQiLCJub25jZSI6ImFkOWRiMDhlLTQ0MmQtNGExOS04NDZkLTI2MTVjZThjNTcyMiIsInNlc3Npb25fc3RhdGUiOiJlNmU0ZDlmZS0wZTA0LTRlMmYtOTY1ZS05ZTNmNjdkZWMzMTAiLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly81Ny4xNTIuOC4zMC5uaXAuaW8iLCJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbXlyZWFsbSIsIm9mZmxpbmVfYWNjZXNzIiwiVGVzdFJvbGUiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIGVtYWlsIHJlYWxtLW1hbmFnZW1lbnQgcHJvZmlsZSBhY2NvdW50Iiwic2lkIjoiZTZlNGQ5ZmUtMGUwNC00ZTJmLTk2NWUtOWUzZjY3ZGVjMzEwIiwibWVtYmVyX2lkIjoxMSwiY291bnRyeSI6IkVHIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImNvbXBhbnlfaWQiOiIyIiwiZW1wbG95ZWVfaWQiOiJjb2RlMTBvbyIsIm5hbWUiOiJNb2hhbWVkIEhhbmkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJoYW5pQGdtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJNb2hhbWVkIiwiZmFtaWx5X25hbWUiOiJIYW5pIiwiZW1haWwiOiJoYW5pQGdtYWlsLmNvbSJ9.Vf2sxTg1TTQiQmXoehH-1z3eqeKWtGLlvTI27C-8IXFm3rTjHOn--NdukdV1w3xexHFU1iYu_h4DsD9I0fgbd8obdkjljMaAITd1ezBPHa5xcbB3s0zTtHvTPgJ_SbEsId8q20tQWQp_INSnrZuuHr4bEKAclwgkEvkS9Q9ZNTgdhoTlXJoABUh179apVR_-hsSujlfXk8PQtkyJlSXpCP1pGqHL8yRCZ_oBkn5k7N9wIZ3rFS_6PRk_x8d8Pfp9nhBpduGCKx3yVJrhkMvOZQQggRe1UhxvBjXEJXXFnB0wxXC6X3eWwOTCKM8NESeC2EVcC-cvf9sg96FHhT3Z6A`;
-      // config.headers["Authorization"] = `Bearer ${this.token}`;
-    }
-
+    // if (this.token) {
+    config.headers[
+      "Authorization"
+    ] = `Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJGbkJ0QVhuNEtZYWVDdkZSNkZQX2EzX21VTmFKZko2dFQ4UzRRRExPUnRVIn0.eyJleHAiOjE3MzAxMTk2MjMsImlhdCI6MTczMDEwMTYyMywiYXV0aF90aW1lIjoxNzMwMTAxNjIwLCJqdGkiOiJhNDY0OGJlZS01NWJmLTQxNTQtOTFjMy02NjFkYzU0Nzk3MGYiLCJpc3MiOiJodHRwOi8va2V5Y2xvYWsuaW50ZXJuYWwuNTcuMTUyLjguMzAubmlwLmlvL3JlYWxtcy9teVJlYWxtIiwiYXVkIjpbIi5OZXQtQ2xpZW50IiwiYWNjb3VudCJdLCJzdWIiOiIzNzZlOGFkZS04NzBmLTQ3MjUtODI4Ny01ZDFlYWE0N2JiZDciLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJyZWFjdC1jbGllbnQiLCJub25jZSI6IjNhY2NhZGNhLWQxYTAtNDQ2MS04NWI4LWU2MzQ5Y2YwMzgwMyIsInNlc3Npb25fc3RhdGUiOiIxNjdjNTUyMC0wNmRhLTQ4N2ItYmM5MS0wMTg1ZDE5MzZkZWYiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly81Ny4xNTIuOC4zMC5uaXAuaW8iLCJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbXlyZWFsbSIsIm9mZmxpbmVfYWNjZXNzIiwiVGVzdFJvbGUiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIGVtYWlsIHJlYWxtLW1hbmFnZW1lbnQgcHJvZmlsZSBhY2NvdW50Iiwic2lkIjoiMTY3YzU1MjAtMDZkYS00ODdiLWJjOTEtMDE4NWQxOTM2ZGVmIiwibWVtYmVyX2lkIjo0LCJjb3VudHJ5IjoiRUciLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNvbXBhbnlfaWQiOiIyIiwiZW1wbG95ZWVfaWQiOiJjb2RlMTAiLCJuYW1lIjoiTW9oYW1lZCBIYW5pIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFuaUBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiTW9oYW1lZCIsImZhbWlseV9uYW1lIjoiSGFuaSIsImVtYWlsIjoiaGFuaUBnbWFpbC5jb20ifQ.n9EDKDzBoSUIazMRg4FBdpVa-0-fADudYjTD0VtN8LDar166aTCwUEoAyBkEpJ_6BWO_Iy5ERS70zqMaXryyo1j9szk4EqTZsXWAnEljw6jNs7q-xuxXzyZjVoNB06SIlj96cytwG-48s_Br2pw5kUybv7FuZ62bB_UvSzMHY64VTCs3pkZ8yhWVAE00w2H1O0MwvObN37WegsiXTRX8rDCjBrmJyKfhoZ8HaCo2MuDFZ-PVGYT14_OCFns0j3dQ85qVVrJlZBFcoyBe1xKQGWLXEanJ9egpQIlofqN9ggV2azuqI7_fNMfVOQA-rke5uxMmOVz4ltKHw6nCpA2Oww`;
+    config.headers["Content-Type"] = "application/json";
+    // config.headers["Authorization"] = `Bearer ${this.token}`;
+    // }
     return config;
   };
 

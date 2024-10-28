@@ -17,15 +17,17 @@ import Toast from "react-native-root-toast";
 import { AxiosError } from "axios";
 import { useMemo, useState } from "react";
 import { TimeLogsService } from "@/services/TimeLogs/TimeLogsService";
-// import { useColorScheme } from "nativewind";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
+  const [loadingBreak, setLoadingBreak] = useState(false);
   const [status, setStatus] = useState("Clock In");
+  const [breakTitle, setBreakTitle] = useState("Start");
+
   const timeLogsService: TimeLogsService = useMemo(
-    () => new TimeLogsService(""),
+    () => new TimeLogsService(),
     []
   );
 
@@ -38,20 +40,34 @@ export default function HomeScreen() {
     }
   };
 
-  const toggleClock = async (method: string, msg: string, status: string) => {
+  const toggleClock = async (
+    method: string,
+    msg: string,
+    status?: string | null,
+    breakHeader?: string | null
+  ) => {
+    setLoadingBreak(true);
+
     try {
       const response = await timeLogsService.takeAction({
-        employeeTimeLogId: 34,
+        employeeId: "dsa",
         logAction: method,
       });
       Toast.show(msg);
       setLoading(false);
-      setStatus(status);
 
-      // console.log(response?.data);
+      if (status) setStatus(status);
+      if (breakHeader) setBreakTitle(breakHeader);
+
+      setLoadingBreak(false);
       setData(response?.data);
     } catch (error: AxiosError | any) {
+      console.log(error?.response.data.message);
+      // if (error?.response?.status === 422 && error?.response?.data?.message) {
+      Toast.show(error?.response?.data?.message);
+      // }
       setLoading(false);
+      setLoadingBreak(false);
     }
   };
 
@@ -94,7 +110,15 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView>
-        <Attendance loading={loading} takeAction={takeAction} status={status} />
+        <Attendance
+          loading={loading}
+          takeAction={takeAction}
+          toggleClock={toggleClock}
+          status={status}
+          breakTitle={breakTitle}
+          loadingBreak={loadingBreak}
+          setLoadingBreak={setLoadingBreak}
+        />
         <Summary />
       </ScrollView>
     </SafeAreaView>

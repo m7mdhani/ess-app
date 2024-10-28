@@ -21,10 +21,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import RequestCard from "@/components/Requests/requestCard";
 import { requestsData } from "@/data/data";
 import { StatusBar } from "expo-status-bar";
+import RequestsList from "@/components/RequestsList/RequestsList";
 
 const Requests = () => {
   const [active, setActive] = useState("1");
   const colorScheme = useColorScheme();
+  const [data, setData] = useState([]);
 
   return (
     <SafeAreaView
@@ -88,6 +90,10 @@ const Requests = () => {
           marginTop: 16,
         }}
       />
+
+      <View className="flex-1">
+        <RequestsList type={active} />
+      </View>
     </SafeAreaView>
   );
 };

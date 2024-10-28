@@ -5,41 +5,37 @@ import {
   StyleSheet,
   useColorScheme,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { logs } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
 import { Swipeable } from "react-native-gesture-handler";
+import { TimeLogsService } from "@/services/TimeLogs/TimeLogsService";
 
 const AttendanceHistory = () => {
   const colorScheme = useColorScheme();
+  const [timeLogs, setTimeLogs] = useState([]);
+  const timeLogsService = new TimeLogsService();
 
-  const renderRightActions = () => (
-    <View style={styles.actionsContainer} className="rounded-xl">
-      <TouchableOpacity style={[styles.button, styles.edit]} className="">
-        <Text style={styles.actionText}>Edit</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, styles.delete]}
-        className="rounded-tr-lg rounded-br-lg"
-      >
-        <Text style={styles.actionText}>Delete</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  const getTimeLogs = async () => {
+    const response: any = await timeLogsService.getEmployeeTimeLogs({
+      EmployeeId: "dsa",
+    });
+    console.log(response?.data);
+    // setTimeLogs(logs);
+  };
+
+  useEffect(() => {
+    getTimeLogs();
+  }, []);
 
   return (
     <View className="gap-5 w-full justify-center">
       {logs?.length > 0 ? (
         logs.map((item) => (
-          // <Swipeable
-          //   renderRightActions={renderRightActions}
-          //   key={item.id}
-          //   childrenContainerStyle={{ marginBottom: 12 }}
-          // >
           <View
             key={item.id}
-            className={`flex-row rounded-full overflow-hidden gap-2 overflow-x-hidden border-l-2 p-2 items-center justify-start w-full  ${
+            className={`flex-row rounded-full overflow-hidden gap-2 overflow-x-hidden border border-slate-200 p-2 items-center justify-start w-full  ${
               colorScheme == "dark" ? "bg-sky-900" : "bg-white"
             }`}
           >
@@ -93,7 +89,6 @@ const AttendanceHistory = () => {
               </View>
             </View>
           </View>
-          // </Swipeable>
         ))
       ) : (
         <Text

@@ -1,15 +1,16 @@
+import { IResponseList } from "@/types";
 import { HTTPBaseService } from "../HttpBaseService";
 
 export class EmployeesService extends HTTPBaseService {
   private static classInstance?: EmployeesService;
 
-  constructor(token: string) {
-    super(process.env.REACT_APP_COPMPANY_API_URL, token);
+  constructor() {
+    super("http://employee.57.152.8.30.nip.io/api/");
   }
 
-  public static getInstance(token: string) {
+  public static getInstance() {
     if (!this.classInstance) {
-      this.classInstance = new EmployeesService(token);
+      this.classInstance = new EmployeesService();
     }
 
     return this.classInstance;
@@ -36,14 +37,14 @@ export class EmployeesService extends HTTPBaseService {
     }
   }
   // GET ALL
-  public getEmployees = (body?: any) =>
+  public getEmployees = (body: any) =>
     this.instance
       .get(`Employees`, {
         params: body,
         ...this.getRequestConfig(),
       })
-      .then((response) => {
-        return response;
+      .then((response: IResponseList | object) => {
+        return response as IResponseList;
       });
 
   // GET BY ID

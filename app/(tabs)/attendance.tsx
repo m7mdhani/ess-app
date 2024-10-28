@@ -29,6 +29,36 @@ export default function TabTwoScreen() {
     >
       <StatusBar style={`${colorScheme == "dark" ? "light" : "dark"}`} />
 
+      <View
+        className={`flex-row justify-between items-center  p-4  ${
+          colorScheme == "dark" ? "bg-secondary" : "bg-slate-50"
+        } border-b border-slate-300`}
+      >
+        <Text
+          className={`font-bold text-xl  ${
+            colorScheme == "dark" ? "text-white" : "text-black"
+          }`}
+        >
+          Mohamed Hani
+        </Text>
+
+        <View className="gap-3 flex-row items-center">
+          <TouchableOpacity>
+            <Ionicons
+              name="notifications-outline"
+              color={Colors.light.primary}
+              size={25}
+            />
+          </TouchableOpacity>
+
+          <Image
+            source={require("../../assets/images/logo.png")}
+            className="rounded-full w-8 h-8"
+            resizeMode="contain"
+          />
+        </View>
+      </View>
+
       <ScrollView className="h-full" showsVerticalScrollIndicator={false}>
         <View className="rounded-lg p-4 mb-4">
           <View className="w-full gap-2 items-center pb-2">

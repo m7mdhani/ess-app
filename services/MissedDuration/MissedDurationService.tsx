@@ -19,13 +19,13 @@ interface IResponseData {
 export class MissedDurationRequestService extends HTTPBaseService {
   private static classInstance?: MissedDurationRequestService;
 
-  constructor(token: string) {
-    super(process.env.EXPO_PUBLIC_ATTENDANCE_API_URL, token);
+  constructor() {
+    super("http://attendance.57.152.8.30.nip.io/api/");
   }
 
-  public static getInstance(token: string) {
+  public static getInstance() {
     if (!this.classInstance) {
-      this.classInstance = new MissedDurationRequestService(token);
+      this.classInstance = new MissedDurationRequestService();
     }
 
     return this.classInstance;
@@ -69,10 +69,10 @@ export class MissedDurationRequestService extends HTTPBaseService {
         return response as IResponseList;
       });
 
-  // EDIT
-  public editMissedRequest = (body: any) =>
+  // CANCEL
+  public cancelMissedRequest = (id: string) =>
     this.instance
-      .put("MissedDurationApprovalRequests", body)
+      .put(`MissedDurationApprovalRequests/${id}/CancelRequest`)
       .then((response: IResponseList | object) => {
         return response as IResponseList;
       });

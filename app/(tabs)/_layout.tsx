@@ -9,20 +9,6 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const defaultColor = "#7E7E7E";
 
-  const homeBorderWidth = useRef(new Animated.Value(0)).current;
-  const attendanceBorderWidth = useRef(new Animated.Value(0)).current;
-  const requestsBorderWidth = useRef(new Animated.Value(0)).current;
-  const profileBorderWidth = useRef(new Animated.Value(0)).current;
-
-  // Function to animate the border width
-  const animateBorder = (borderValue: Animated.Value, focused: boolean) => {
-    Animated.timing(borderValue, {
-      toValue: focused ? 2 : 0, // 2px border when focused, 0 when not
-      duration: 300, // Adjust the duration to control speed
-      useNativeDriver: false,
-    }).start();
-  };
-
   return (
     <Tabs
       screenOptions={{
@@ -103,6 +89,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="requests"
         options={{

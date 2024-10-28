@@ -4,12 +4,32 @@ import {
   TouchableOpacity,
   useColorScheme,
   ActivityIndicator,
+  Image,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import BreakModal from "../Modals/BreakModal";
 
-const Attendance = ({ loading, takeAction, status }: any) => {
+const Attendance = ({
+  loading,
+  takeAction,
+  toggleClock,
+  status,
+  loadingBreak,
+  breakTitle,
+}: any) => {
   const colorScheme = useColorScheme();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // closes  modal
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  // opens modal
+  const openModal = () => {
+    setModalVisible(true);
+  };
 
   return (
     <View
@@ -61,27 +81,58 @@ const Attendance = ({ loading, takeAction, status }: any) => {
           </Text>
         </View>
 
-        <TouchableOpacity
-          className="p-3 w-full bg-[#F26651] mt-4 rounded-lg"
-          onPress={takeAction}
-          disabled={loading}
-        >
-          <View className="flex-row items-center justify-center gap-2">
-            {loading ? (
-              <ActivityIndicator size={30} color="white" />
-            ) : (
-              <>
-                <Ionicons
-                  name="finger-print-outline"
-                  size={30}
-                  color={"#fff"}
+        <View className="flex-row items-center w-full justify-between gap-3 mt-3">
+          <TouchableOpacity
+            className={`p-3 ${
+              status == "Clock Out" ? "w-[80%]" : "w-full"
+            } bg-[#F26651] mt-4 rounded-lg`}
+            onPress={takeAction}
+            disabled={loading}
+          >
+            <View className="flex-row items-center justify-center gap-2">
+              {loading ? (
+                <ActivityIndicator size={30} color="white" />
+              ) : (
+                <>
+                  <Ionicons
+                    name="finger-print-outline"
+                    size={30}
+                    color={"#fff"}
+                  />
+                  <Text className="text-white text-center text-lg">
+                    {status}
+                  </Text>
+                </>
+              )}
+            </View>
+          </TouchableOpacity>
+
+          {status == "Clock Out" && (
+            <TouchableOpacity
+              className=" w-[20%] mt-4 rounded-lg"
+              onPress={openModal}
+              disabled={loading}
+            >
+              <View className="items-center justify-center p-1 w-[50] h-[50] border border-gray-200 rounded-lg">
+                <Image
+                  source={require("../../assets/images/break.png")}
+                  className="w-full h-full"
                 />
-                <Text className="text-white text-center text-lg">{status}</Text>
-              </>
-            )}
-          </View>
-        </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
+
+      {modalVisible && (
+        <BreakModal
+          openModal={openModal}
+          closeModal={closeModal}
+          toggleClock={toggleClock}
+          breakTitle={breakTitle}
+          loadingBreak={loadingBreak}
+        />
+      )}
     </View>
   );
 };

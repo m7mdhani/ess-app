@@ -41,6 +41,8 @@ export default function RootLayout() {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="+not-found" />
+          <Stack.Screen name="(editReqests)" options={{ headerShown: false }} />
+          <Stack.Screen name="(ViewRequests)/view/[id]" />
         </Stack>
       </RootSiblingParent>
     </ThemeProvider>
