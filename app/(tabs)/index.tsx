@@ -34,6 +34,13 @@ export default function HomeScreen() {
     []
   );
 
+  const loadStatus = async () => {
+    const savedStatus = await AsyncStorage.getItem("status");
+    if (savedStatus) {
+      setStatus(savedStatus);
+    }
+  };
+
   const takeAction = async () => {
     setLoading(true);
     if (status === "Clock In") {
@@ -59,7 +66,10 @@ export default function HomeScreen() {
       Toast.show(msg);
       setLoading(false);
 
-      if (status) setStatus(status);
+      if (status) {
+        await AsyncStorage.setItem("status", status);
+        setStatus(status);
+      }
       if (breakHeader) setBreakTitle(breakHeader);
 
       setLoadingBreak(false);
@@ -74,7 +84,7 @@ export default function HomeScreen() {
     }
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const loadLanguage = async () => {
       const savedLanguage = await AsyncStorage.getItem("language");
       if (savedLanguage) {
@@ -83,6 +93,10 @@ export default function HomeScreen() {
     };
 
     loadLanguage();
+  }, []);
+
+  useEffect(() => {
+    loadStatus();
   }, []);
 
   return (

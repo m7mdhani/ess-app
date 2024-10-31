@@ -34,10 +34,6 @@ const Profile = () => {
     >
       <StatusBar animated style={colorScheme === "dark" ? "light" : "dark"} />
 
-      <View>
-        <Text>{I18nManager.isRTL ? " RTL" : " LTR"}</Text>
-      </View>
-
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="m-4">
           <View className="flex-row gap-3 items-center">

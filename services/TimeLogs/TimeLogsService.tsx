@@ -33,7 +33,7 @@ export class TimeLogsService extends HTTPBaseService {
   // GET PAGINATED
   public getEmployeeTimeLogs = (body: any) =>
     this.instance
-      .get("EmployeeTimeLogs", {
+      .get("EmployeeTimeLogs/ShiftLogs", {
         params: body,
         ...this.getRequestConfig(),
       })

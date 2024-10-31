@@ -5,10 +5,20 @@ import {
   useColorScheme,
   ActivityIndicator,
   Image,
+  Platform,
+  UIManager,
+  LayoutAnimation,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BreakModal from "../Modals/BreakModal";
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const Attendance = ({
   loading,
@@ -21,15 +31,17 @@ const Attendance = ({
   const colorScheme = useColorScheme();
   const [modalVisible, setModalVisible] = useState(false);
 
-  // closes  modal
   const closeModal = () => {
     setModalVisible(false);
   };
 
-  // opens modal
   const openModal = () => {
     setModalVisible(true);
   };
+
+  useEffect(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  }, [status]);
 
   return (
     <View

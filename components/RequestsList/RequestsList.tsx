@@ -21,8 +21,8 @@ import { formatDate, formatTime } from "@/utils";
 const RequestsList = ({ type }: any) => {
   const colorScheme = useColorScheme();
 
-  const overtimeInstance = new OvertimeRequestService("");
-  const missedTimeInstance = new MissedDurationRequestService("");
+  const overtimeInstance = new OvertimeRequestService();
+  const missedTimeInstance = new MissedDurationRequestService();
 
   const [data, setData] = useState<any[]>([]);
   const [loadingCancel, setLoadingCancel] = useState(false);
@@ -32,6 +32,9 @@ const RequestsList = ({ type }: any) => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+
+  console.log(hasMoreData)
+  console.log(loadingMore)
 
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchData, setSearchData] = useState<any>({

@@ -24,7 +24,7 @@ import { StatusBar } from "expo-status-bar";
 import RequestsList from "@/components/RequestsList/RequestsList";
 
 const Requests = () => {
-  const [active, setActive] = useState("1");
+  const [active, setActive] = useState("2");
   const colorScheme = useColorScheme();
   const [data, setData] = useState([]);
 

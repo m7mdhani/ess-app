@@ -123,11 +123,11 @@ export const logs = [
 ];
 
 export const requestsData = [
-  {
-    id: "1",
-    title: "All Requests",
-    icon: "people",
-  },
+  // {
+  //   id: "1",
+  //   title: "All Requests",
+  //   icon: "people",
+  // },
   {
     id: "2",
     title: "Overtime Requests",
@@ -174,25 +174,25 @@ export const allRequests = [
     title: "Overtime Requests",
     image: require("../assets/images/time.png"),
     icon: "add-circle-outline",
-    href: "/overtimeRequest"
+    href: "/overtimeRequest",
   },
   {
     id: "2",
     title: "Missing Requests",
     image: require("../assets/images/time2.png"),
-    href: "/missingtimeRequest"
+    href: "/missingtimeRequest",
   },
   {
     id: "3",
     title: "Overtime Settings",
     image: require("../assets/images/time3.png"),
-    href: "/overtimeRequest"
+    href: "/overtimeRequest",
   },
   {
     id: "4",
     title: "Overtime Settings",
     image: require("../assets/images/time4.png"),
-    href: "/overtimeRequest"
+    href: "/overtimeRequest",
   },
   {
     id: "6",
